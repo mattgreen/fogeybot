@@ -1,12 +1,14 @@
-# Introduction
+## Introduction
 
-A simple Discord bot for forming teams for pickup games. Right now, it's made with Heroes of the Storm in mind.
+A simple Discord bot written with discord.py for forming teams for pickup games. Right now, it's made with Heroes of the Storm in mind.
 
-# Status
+Someone starts a pickup game, then players join the pickup in progress. After ten players have joined, the MMRs specified are used to produce two teams of approximately equal skill.
 
-Alpha-quality! Hasn't been used for any pickup games...yet.
+The balancing algorithm works by sorting players by their skill, pairing players with the closest player of approximate skill, and splitting the pair between teams. To prevent team 1 from being weighted too heavily towards better players, we alternate which team the first player of a pair is assigned to.
 
-# Commands
+Currently, this is **alpha quality**! It hasn't been used for any pickup games...yet.
+
+## Commands
 
 ### !startpickup
 
@@ -24,6 +26,6 @@ Stops the pickup game.
 
 Games should expire after 5 minutes of the first `!startpickup` command.
 
-# Deploying
+## Deploying
 
 Files for running on Heroku are included.
