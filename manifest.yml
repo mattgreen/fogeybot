@@ -1,0 +1,6 @@
+applications:
+- buildpack: https://github.com/cloudfoundry/python-buildpack.git
+  command: python bot.py
+  path: .
+  instances: 1
+  memory: 256M
