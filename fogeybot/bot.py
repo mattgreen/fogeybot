@@ -6,13 +6,11 @@ import time
 
 import discord
 
-email = os.environ["DISCORD_EMAIL"]
-password = os.environ["DISCORD_PASSWORD"]
+from fogeybot.pickup import Pickup
 
 client = discord.Client()
 
-start_time = 0
-players = []
+pickup = Pickup.inactive
 
 @client.event
 async def on_ready():
@@ -23,18 +21,15 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    global start_time
-    global players
+    global pickup
 
+    # TODO: don't hardcode this
     if message.channel.name != "pickup":
         return
 
     if message.content.startswith("!startpickup"):
-        if active_game(start_time):
+        if pickup.active:
             return
-
-        start_time = time.time()
-        players = []
 
         await client.send_message(message.channel, "Pickup game starting!")
         await client.send_message(message.channel, "To join, type !joinpickup MMR, filling in your MMR (e.g. !joinpickup 2200)")
@@ -42,15 +37,14 @@ async def on_message(message):
         print("Starting pickup...")
 
     elif message.content.startswith("!stoppickup"):
-        start_time = 0
-        players = []
+        pickup = Pickup.inactive
 
         await client.send_message(message.channel, "Pickup game abandoned")
 
         print("Stopping pickup")
 
     elif message.content.startswith("!joinpickup"):
-        if not active_game(start_time):
+        if not pickup.active:
             await client.send_message(message.channel, "No current pickup game, please start one with !startpickup first")
             return
 
@@ -58,18 +52,14 @@ async def on_message(message):
         if mmr is None:
             return
 
-        if mmr < 400 or mmr > 5000:
-            mmr = 1500
+        pickup.add_player(message.author.name, mmr)
 
-        players.append(Player(message.author.name, mmr))
+        print("Added/updated %s in player pool" % (message.author.name))
 
-        print("Added %s to player pool" % (message.author.name))
+        if len(pickup.players) == 10:
+            team1, team2 = pickup.teams
 
-        if len(players) == 10:
-            team1, team2 = assign_teams(players)
-
-            start_time = 0
-            players = []
+            pickup = Pickup.inactive
 
             random.shuffle(team1)
             random.shuffle(team2)
@@ -93,34 +83,6 @@ def parse_mmr(s, default=1700):
     except ValueError:
         return None
 
-def active_game(start_time, now=None):
-    if now is None:
-        now = time.time()
-
-    return (now - start_time) < 5 * 60
-
-class Player(object):
-    def __init__(self, name, mmr):
-        self.name = name
-        self.mmr = mmr
-
-def assign_teams(players):
-    team1 = []
-    team2 = []
-
-    players_by_mmr = sorted(players, key=lambda p: p.mmr)
-
-    while players_by_mmr:
-        p1 = players_by_mmr.pop()
-        p2 = players_by_mmr.pop()
-
-        if len(team1) % 2 == 0:
-            team1.append(p1)
-            team2.append(p2)
-        else:
-            team1.append(p2)
-            team2.append(p1)
-
-    return team1, team2
-
+email = os.environ["DISCORD_EMAIL"]
+password = os.environ["DISCORD_PASSWORD"]
 client.run(email, password)
