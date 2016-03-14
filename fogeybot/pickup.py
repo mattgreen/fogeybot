@@ -8,7 +8,8 @@ class Pickup(object):
         self._players = []
         self._updated = now
 
-    def inactive(cls):
+    @staticmethod
+    def inactive():
         return Pickup(0)
 
     @property

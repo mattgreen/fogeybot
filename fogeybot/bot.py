@@ -10,7 +10,7 @@ from fogeybot.pickup import Pickup
 
 client = discord.Client()
 
-pickup = Pickup.inactive
+pickup = Pickup.inactive()
 
 @client.event
 async def on_ready():
@@ -31,13 +31,15 @@ async def on_message(message):
         if pickup.active:
             return
 
+        pickup = Pickup()
+
         await client.send_message(message.channel, "Pickup game starting!")
         await client.send_message(message.channel, "To join, type !joinpickup MMR, filling in your MMR (e.g. !joinpickup 2200)")
 
         print("Starting pickup...")
 
     elif message.content.startswith("!stoppickup"):
-        pickup = Pickup.inactive
+        pickup = Pickup.inactive()
 
         await client.send_message(message.channel, "Pickup game abandoned")
 
@@ -59,7 +61,7 @@ async def on_message(message):
         if len(pickup.players) == 10:
             team1, team2 = pickup.teams
 
-            pickup = Pickup.inactive
+            pickup = Pickup.inactive()
 
             random.shuffle(team1)
             random.shuffle(team2)
