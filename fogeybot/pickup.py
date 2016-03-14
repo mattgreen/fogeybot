@@ -1,6 +1,8 @@
 import time
 
 class Pickup(object):
+    TIMEOUT = 15 * 60
+
     def __init__(self, now=None):
         if now is None:
             now = time.time()
@@ -14,7 +16,7 @@ class Pickup(object):
 
     @property
     def active(self):
-        return (time.time() - self._updated) < 5 * 60
+        return (time.time() - self._updated) < self.TIMEOUT
 
     def add_player(self, name, mmr, now=None):
         if now is None:
