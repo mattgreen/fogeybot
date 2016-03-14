@@ -2,7 +2,6 @@ import asyncio
 import os
 import random
 import re
-import time
 
 import discord
 
@@ -10,6 +9,11 @@ from fogeybot.pickup import Pickup
 
 client = discord.Client()
 
+email = os.environ["DISCORD_EMAIL"]
+password = os.environ["DISCORD_PASSWORD"]
+channel = os.environ.get("DISCORD_CHANNEL")
+
+# Global state
 pickup = Pickup.inactive()
 
 @client.event
@@ -23,9 +27,9 @@ async def on_ready():
 async def on_message(message):
     global pickup
 
-    # TODO: don't hardcode this
-    if message.channel.name != "pickup":
-        return
+    if channel:
+        if message.channel.name != channel:
+            return
 
     if message.content.startswith("!startpickup"):
         if pickup.active:
@@ -33,21 +37,33 @@ async def on_message(message):
 
         pickup = Pickup()
 
-        await client.send_message(message.channel, "Pickup game starting!")
-        await client.send_message(message.channel, "To join, type !joinpickup MMR, filling in your MMR (e.g. !joinpickup 2200)")
+        await client.send_message(message.channel, "**Pickup game starting!**")
+
+        join_msg = "__To join__: type `!joinpickup 1700`%s, replacing 1700 with your MMR"
+        if channel:
+            channel_help = "in `#" + channel + "` "
+        else:
+            channel_help = ""
+
+        await client.send_message(message.channel, join_msg.replace("%s", channel_help))
+        pickup.status_message = await client.send_message(message.channel, "__Status__: 0/10 slots filled")
 
         print("Starting pickup...")
 
     elif message.content.startswith("!stoppickup"):
+        msg = pickup.status_message
         pickup = Pickup.inactive()
 
-        await client.send_message(message.channel, "Pickup game abandoned")
+        if msg is not None:
+            await client.edit_message(msg, "__Status__: stopped")
+
+        await client.send_message(message.channel, "Pickup game stopped")
 
         print("Stopping pickup")
 
     elif message.content.startswith("!joinpickup"):
         if not pickup.active:
-            await client.send_message(message.channel, "No current pickup game, please start one with !startpickup first")
+            await client.send_message(message.channel, "No current pickup game, please start one with `!startpickup` first")
             return
 
         mmr = parse_mmr(message.content)
@@ -55,6 +71,7 @@ async def on_message(message):
             return
 
         pickup.add_player(message.author.name, mmr)
+        await client.edit_message(pickup.status_message, "__Status__: %d/10 slots filled" % (len(pickup.players)))
 
         print("Added/updated %s in player pool" % (message.author.name))
 
@@ -67,8 +84,8 @@ async def on_message(message):
             random.shuffle(team2)
 
             assignments  = "Pickup team assignments balanced by MMR: \n"
-            assignments += "Team 1: " + ", ".join([player.name for player in team1]) + "\n"
-            assignments += "Team 2: " + ", ".join([player.name for player in team2])
+            assignments += "__Team 1__: " + ", ".join([player.name for player in team1]) + "\n"
+            assignments += "__Team 2__: " + ", ".join([player.name for player in team2])
 
             await client.send_message(message.channel, assignments)
 
@@ -85,6 +102,4 @@ def parse_mmr(s, default=1700):
     except ValueError:
         return None
 
-email = os.environ["DISCORD_EMAIL"]
-password = os.environ["DISCORD_PASSWORD"]
 client.run(email, password)

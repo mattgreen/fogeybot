@@ -9,6 +9,7 @@ class Pickup(object):
 
         self._players = []
         self._updated = now
+        self.status_message = None
 
     @staticmethod
     def inactive():
