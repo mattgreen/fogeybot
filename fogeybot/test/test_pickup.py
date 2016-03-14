@@ -1,6 +1,6 @@
 import unittest
 
-from fogeybot.pickup import Pickup
+from fogeybot.cogs.pickup.pickup import Pickup
 
 class TestPickup(unittest.TestCase):
     def setUp(self):
