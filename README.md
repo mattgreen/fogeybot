@@ -1,4 +1,4 @@
-## Introduction
+## Introduction [![Build Status](https://travis-ci.org/mattgreen/fogeybot.svg?branch=master)](https://travis-ci.org/mattgreen/fogeybot)
 
 A simple Discord bot written with `discord.py` for forming teams for pickup games.
 
