@@ -2,7 +2,7 @@
 
 A simple Discord bot written with `discord.py` for forming teams for pickup games.
 
-Right now, it's made with Heroes of the Storm in mind, though it should work for any game.
+It's tailored towards Heroes of the Storm.
 
 ## Prerequisites
 
@@ -63,7 +63,11 @@ If the MMR is not parsable, it is ignored. If it is outside a reasonable range, 
 
 Stops the pickup game.
 
-Games expire after 5 minutes of the first `!startpickup` command.
+Games expire after 15 minutes of the first `!startpickup` command.
+
+### !randommap
+
+Prints a random map, excluding Haunted Mines.
 
 ## Deploying
 
