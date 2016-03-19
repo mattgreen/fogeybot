@@ -1,13 +1,17 @@
 import random
+
 from discord.ext.commands import command
 
+from fogeybot.errors import APIError
 from .pickup import Pickup
 
 class PickupCommands(object):
-    def __init__(self, bot, channel):
+    def __init__(self, bot, api, channel):
         self.bot = bot
+        self.api = api
         self.channel = channel
 
+        self.maps = None
         self.state = {}
 
     def in_correct_channel(self, ctx):
@@ -48,6 +52,23 @@ class PickupCommands(object):
             assignments += "__Team 2__: " + ", ".join([player.name for player in team2])
 
             await self.bot.say(assignments)
+
+    @command(description="Choose a random map", pass_context=True)
+    async def randommap(self, ctx):
+        if not self.in_correct_channel(ctx):
+            return
+
+        if self.maps is None:
+            try:
+                self.maps = await self.api.get_maps()
+            except APIError:
+                pass
+
+        if self.maps is not None:
+            selected_map = random.choice(self.maps)
+            await self.bot.say("Random map: " + selected_map)
+        else:
+            await self.bot.say("Sorry, I can't get the map list right now! Try again later.")
 
     @command(description="Start a new pickup game", no_pm=True, pass_context=True)
     async def startpickup(self, ctx):

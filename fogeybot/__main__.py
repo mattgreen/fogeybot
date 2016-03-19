@@ -1,6 +1,8 @@
 import os
 
 from discord.ext.commands import Bot
+
+from fogeybot.hotslogs_api import HotsLogsAPI
 from fogeybot.cogs.general.cog import GeneralCommands
 from fogeybot.cogs.pickup.cog import PickupCommands
 
@@ -14,7 +16,9 @@ email = os.environ["DISCORD_EMAIL"]
 password = os.environ["DISCORD_PASSWORD"]
 channel = os.environ.get("DISCORD_CHANNEL")
 
+api = HotsLogsAPI()
+
 bot.add_cog(GeneralCommands(bot))
-bot.add_cog(PickupCommands(bot, channel))
+bot.add_cog(PickupCommands(bot, api, channel))
 
 bot.run(email, password)

@@ -1,6 +1,8 @@
 import aiohttp
 import asyncio
 
+from .errors import APIError
+
 class HotsLogsAPI(object):
     async def _get(self, url, timeout=5):
         with aiohttp.ClientSession() as client:
@@ -42,7 +44,3 @@ class HotsLogsAPI(object):
                 profile["hl"] = ranking["CurrentMMR"]
 
         return profile
-
-
-class APIError(Exception):
-    pass
