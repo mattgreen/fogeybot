@@ -3,5 +3,5 @@ applications:
   command: python -m fogeybot
   path: .
   instances: 1
-  memory: 64M
+  memory: 128M
   no-route: true
