@@ -1,21 +1,15 @@
 import aiohttp
-import asyncio
 
 from .errors import APIError
 
 class HotsLogsAPI(object):
-    async def _get(self, url, timeout=5):
-        with aiohttp.ClientSession() as client:
-            async with client.get(url) as response:
-                return await response.json()
-
     async def get_maps(self):
         try:
-            maps = await self._get("https://www.hotslogs.com/API/Data/Maps")
-
-            return [m["PrimaryName"]
-                    for m in maps
-                    if "mines" not in m["PrimaryName"].lower()]
+            async with aiohttp.get("https://www.hotslogs.com/API/Data/Maps") as response:
+                maps = await response.json()
+                return [m["PrimaryName"]
+                        for m in maps
+                        if "mines" not in m["PrimaryName"].lower()]
 
         except aiohttp.ClientError:
             raise APIError()
@@ -25,7 +19,8 @@ class HotsLogsAPI(object):
             raise ValueError("battle tag must include '#'")
 
         try:
-            response = await self._get("https://www.hotslogs.com/API/Players/1/" + tag.replace("#", "_"))
+            async with aiohttp.get("https://www.hotslogs.com/API/Players/1/" + tag.replace("#", "_")) as r:
+                response = await r.json()
         except aiohttp.ClientError:
             raise APIError()
 
