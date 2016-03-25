@@ -37,7 +37,7 @@ The balancing algorithm works by sorting players by their skill, pairing players
 
 ## Status
 
-Currently, this is **beta quality**!
+This is used regularly to host pickup games for Fogey League.
 
 ## Commands
 
@@ -48,6 +48,10 @@ Prints help information
 ### !uptime
 
 Prints uptime information. Useful for monitoring how good your hosting is.
+
+### !coinflip
+
+Flips a coin
 
 ### !startpickup
 

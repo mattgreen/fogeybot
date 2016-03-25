@@ -26,6 +26,15 @@ class PickupCommands(object):
     def set_server_pickup(self, ctx, pickup):
         self.state[ctx.message.server] = pickup
 
+    @command(description="Flips a coin", no_pm=True, pass_context=True)
+    async def coinflip(self, ctx):
+        if not self.in_correct_channel(ctx):
+            return
+
+        result = random.choice(["heads", "tails"])
+
+        await self.bot.say("_flips a coin..._ **{}**!".format(result))
+
     @command(description="Join an already-started pickup game. Format: <mmr>", no_pm=True, pass_context=True)
     async def joinpickup(self, ctx, mmr: int=1700):
         if not self.in_correct_channel(ctx):
@@ -44,12 +53,12 @@ class PickupCommands(object):
 
             self.set_server_pickup(ctx, Pickup.inactive())
 
-            random.shuffle(team1)
-            random.shuffle(team2)
+            random.shuffle(team1.members)
+            random.shuffle(team2.members)
 
-            assignments  = "Pickup team assignments balanced by MMR: \n"
-            assignments += "__Team 1__: " + ", ".join([player.name for player in team1]) + "\n"
-            assignments += "__Team 2__: " + ", ".join([player.name for player in team2])
+            assignments = "Pickup team assignments: \n"
+            assignments += "__Team 1__: {} (avg MMR: {})\n".format(", ".join(team1.members), team1.mean_mmr)
+            assignments += "__Team 2__: {} (avg MMR: {})\n".format(", ".join(team2.members), team2.mean_mmr)
 
             await self.bot.say(assignments)
 

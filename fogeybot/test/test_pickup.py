@@ -50,6 +50,17 @@ class TestPickup(unittest.TestCase):
         self.pickup.add_player("name4", 1700)
 
         team1, team2 = self.pickup.teams
+        self.assertTrue(len(team1.members) == 2)
+        self.assertTrue(len(team2.members) == 2)
+
+    def test_calculates_mean_mmr(self):
+        self.pickup.add_player("name", 1700)
+        self.pickup.add_player("name2", 600)
+        self.pickup.add_player("name3", 600)
+        self.pickup.add_player("name4", 1700)
+
+        team1, team2 = self.pickup.teams
+        self.assertEqual(team1.mean_mmr, team2.mean_mmr)
 
     def test_active(self):
         self.assertFalse(Pickup(5).active)

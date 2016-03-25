@@ -1,3 +1,4 @@
+import statistics
 import time
 
 class Pickup(object):
@@ -62,7 +63,13 @@ class Pickup(object):
                 team1.append(p2)
                 team2.append(p1)
 
-        return team1, team2
+        return Team(team1), Team(team2)
+
+
+class Team(object):
+    def __init__(self, players):
+        self.members = [p.name for p in players]
+        self.mean_mmr = int(statistics.mean([p.mmr for p in players]))
 
 
 class Player(object):
