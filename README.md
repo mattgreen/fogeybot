@@ -57,16 +57,21 @@ Flips a coin
 
 Prints out information about the current pickup, including who has joined
 
-
 ### !startpickup
 
 Starts a new pickup game
 
+### !addpickup name [mmr]
+
+Adds the specified player to the current pickup game with the given MMR. If it is not specified, use a default MMR of 1500. This command is useful for quickly on-boarding new users.
+
+If the MMR is not parsable, it is ignored. If it is outside a reasonable range, it defaults to 1500.
+
 ### !joinpickup [mmr]
 
-Adds the player to the current pickup game with the given MMR. If it is not specified, use a default MMR of 1700.
+Adds the player to the current pickup game with the given MMR. If it is not specified, use a default MMR of 1500.
 
-If the MMR is not parsable, it is ignored. If it is outside a reasonable range, it defaults to 1700.
+If the MMR is not parsable, it is ignored. If it is outside a reasonable range, it defaults to 1500.
 
 ### !stoppickup
 

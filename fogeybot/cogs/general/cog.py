@@ -1,4 +1,5 @@
 import datetime
+import random
 
 from discord.ext.commands import command
 
@@ -6,6 +7,12 @@ class GeneralCommands(object):
     def __init__(self, bot):
         self.bot = bot
         self.start_time = datetime.datetime.now()
+
+    @command(description="Flips a coin", no_pm=True)
+    async def coinflip(self):
+        result = random.choice(["heads", "tails"])
+
+        await self.bot.say("_flips a coin..._ **{}**!".format(result))
 
     @command()
     async def info(self):

@@ -9,12 +9,6 @@ class TestPickupCog(unittest.TestCase):
         self.bot = MockBot()
         self.cog = PickupCommands(self.bot, self.api, None)
 
-    def test_coinflip(self):
-        invoke_cog_command(self.cog, 'coinflip', None)
-
-        assert self.bot.messages
-        assert "heads" in self.bot.messages[0] or "tails" in self.bot.messages[0]
-
     def test_randommap(self):
         invoke_cog_command(self.cog, 'randommap', None)
 

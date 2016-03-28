@@ -7,6 +7,8 @@ from fogeybot.errors import APIError
 from .pickup import Pickup
 
 class PickupCommands(object):
+    DEFAULT_MMR = 1500
+
     def __init__(self, bot, api, channel):
         self.bot = bot
         self.api = api
@@ -29,26 +31,14 @@ class PickupCommands(object):
     def set_server_pickup(self, ctx, pickup):
         self.state[ctx.message.server] = pickup
 
-    @command(description="Flips a coin", no_pm=True, pass_context=True)
-    async def coinflip(self, ctx):
-        if not self.in_correct_channel(ctx):
-            return
-
-        result = random.choice(["heads", "tails"])
-
-        await self.bot.say("_flips a coin..._ **{}**!".format(result))
-
-    @command(description="Join an already-started pickup game. Format: <mmr>", no_pm=True, pass_context=True)
-    async def joinpickup(self, ctx, mmr: int=1700):
-        if not self.in_correct_channel(ctx):
-            return
-
+    async def add_pickup_player(self, ctx, name, mmr):
         pickup = self.get_server_pickup(ctx)
         if not pickup.active:
             await self.bot.say("No current pickup game, please start one with `!startpickup` first")
             return
 
-        pickup.add_player(ctx.message.author.name, mmr)
+        pickup.add_player(name, mmr)
+
         await self.bot.edit_message(pickup.status_message, "__Status__: %d/10 slots filled" % (len(pickup.players)))
 
         if len(pickup.players) == 10:
@@ -64,6 +54,20 @@ class PickupCommands(object):
             assignments += "__Team 2__: {} (avg MMR: {})\n".format(", ".join(team2.members), team2.mean_mmr)
 
             await self.bot.say(assignments)
+
+    @command(description="Manually add a player to a pickup. Format: <name> <mmr>", no_pm=True, pass_context=True)
+    async def addpickup(self, ctx, name: str, mmr: int=DEFAULT_MMR):
+        if not self.in_correct_channel(ctx):
+            return
+
+        await self.add_pickup_player(ctx, name, mmr)
+
+    @command(description="Join an already-started pickup game. Format: <mmr>", no_pm=True, pass_context=True)
+    async def joinpickup(self, ctx, mmr: int=DEFAULT_MMR):
+        if not self.in_correct_channel(ctx):
+            return
+
+        await self.add_pickup_player(ctx, ctx.message.author.name, mmr)
 
     @command(description="Show who has joined the pickup", no_pm=True, pass_context=True)
     async def pickupstatus(self, ctx):
