@@ -1,4 +1,5 @@
 import random
+import re
 
 from discord.ext.commands import command
 
@@ -18,7 +19,9 @@ class PickupCommands(object):
         if not self.channel:
             return True
 
-        return ctx.message.channel.name == self.channel
+        channel = ctx.message.channel.name
+
+        return re.sub("[^a-zA-Z0-9]", "", channel).lower() == self.channel.lower()
 
     def get_server_pickup(self, ctx):
         return self.state.get(ctx.message.server, Pickup.inactive())
@@ -62,10 +65,10 @@ class PickupCommands(object):
 
             await self.bot.say(assignments)
 
-    @command(description="Show who has joined the pickup", no_pm=False, pass_context=True)
+    @command(description="Show who has joined the pickup", no_pm=True, pass_context=True)
     async def pickupstatus(self, ctx):
-        #if not self.in_correct_channel(ctx):
-            #return
+        if not self.in_correct_channel(ctx):
+            return
 
         pickup = self.get_server_pickup(ctx)
         if not pickup.active:
