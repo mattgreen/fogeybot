@@ -53,6 +53,11 @@ Prints uptime information. Useful for monitoring how good your hosting is.
 
 Flips a coin
 
+### !pickupstatus
+
+Prints out information about the current pickup, including who has joined
+
+
 ### !startpickup
 
 Starts a new pickup game

@@ -62,6 +62,25 @@ class PickupCommands(object):
 
             await self.bot.say(assignments)
 
+    @command(description="Show who has joined the pickup", no_pm=False, pass_context=True)
+    async def pickupstatus(self, ctx):
+        #if not self.in_correct_channel(ctx):
+            #return
+
+        pickup = self.get_server_pickup(ctx)
+        if not pickup.active:
+            await self.bot.say("No current pickup game, please start one with `!startpickup` first")
+            return
+
+        players = pickup.players
+
+        status = "Pickup Status: \n"
+        status += "__Info__: {}/10 slots filled\n".format(len(players))
+        status += "__Players__: {}\n".format(", ".join([p.name for p in players]))
+
+        await self.bot.say(status)
+
+
     @command(description="Choose a random map", pass_context=True)
     async def randommap(self, ctx):
         if not self.in_correct_channel(ctx):
