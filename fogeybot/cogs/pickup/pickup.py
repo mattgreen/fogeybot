@@ -2,7 +2,7 @@ import statistics
 import time
 
 class Pickup(object):
-    TIMEOUT = 15 * 60
+    TIMEOUT = 30 * 60
 
     def __init__(self, now=None):
         if now is None:
