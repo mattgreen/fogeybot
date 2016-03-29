@@ -90,12 +90,22 @@ class PickupCommands(object):
 
     @command(description="Choose a random map", pass_context=True)
     async def randommap(self, ctx):
+        def allowed_map(m):
+            exclusions = ["mines", "cavern"]
+
+            for exclusion in exclusions:
+                if exclusion in m.lower():
+                    return False
+
+            return True
+
         if not self.in_correct_channel(ctx):
             return
 
         if self.maps is None:
             try:
-                self.maps = await self.api.get_maps()
+                self.maps = [m for m in await self.api.get_maps() if allowed_map(m)]
+
             except APIError:
                 pass
 

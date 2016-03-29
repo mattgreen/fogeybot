@@ -7,9 +7,7 @@ class HotsLogsAPI(object):
         try:
             async with aiohttp.get("https://www.hotslogs.com/API/Data/Maps") as response:
                 maps = await response.json()
-                return [m["PrimaryName"]
-                        for m in maps
-                        if "mines" not in m["PrimaryName"].lower()]
+                return [m["PrimaryName"] for m in maps]
 
         except aiohttp.ClientError:
             raise APIError()
