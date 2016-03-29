@@ -73,6 +73,10 @@ Adds the player to the current pickup game with the given MMR. If it is not spec
 
 If the MMR is not parsable, it is ignored. If it is outside a reasonable range, it defaults to 1500.
 
+### !leavepickup
+
+Removes your pickup slot, freeing it up for someone else.
+
 ### !stoppickup
 
 Stops the pickup game.

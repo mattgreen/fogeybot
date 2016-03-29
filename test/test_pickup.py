@@ -64,3 +64,15 @@ class TestPickup(unittest.TestCase):
 
     def test_active(self):
         self.assertFalse(Pickup(5).active)
+
+    def test_removes_player(self):
+        self.pickup.add_player("bob", 1700)
+        self.pickup.remove_player("bob")
+
+        assert len(self.pickup.players) == 0
+
+    def test_removes_nothing_if_not_found(self):
+        self.pickup.add_player("bob", 1700)
+        self.pickup.remove_player("cindy")
+
+        assert len(self.pickup.players) == 1

@@ -40,6 +40,12 @@ class Pickup(object):
     def players(self):
         return list(self._players)
 
+    def remove_player(self, name):
+        for player in self._players:
+            if player.name == name:
+                self._players.remove(player)
+                break
+
     @property
     def teams(self):
         if len(self._players) < 2:

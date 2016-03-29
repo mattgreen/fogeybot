@@ -31,14 +31,7 @@ class PickupCommands(object):
     def set_server_pickup(self, ctx, pickup):
         self.state[ctx.message.server] = pickup
 
-    async def add_pickup_player(self, ctx, name, mmr):
-        pickup = self.get_server_pickup(ctx)
-        if not pickup.active:
-            await self.bot.say("No current pickup game, please start one with `!startpickup` first")
-            return
-
-        pickup.add_player(name, mmr)
-
+    async def on_pickup_updated(self, ctx, pickup):
         await self.bot.edit_message(pickup.status_message, "__Status__: %d/10 slots filled" % (len(pickup.players)))
 
         if len(pickup.players) == 10:
@@ -60,14 +53,41 @@ class PickupCommands(object):
         if not self.in_correct_channel(ctx):
             return
 
-        await self.add_pickup_player(ctx, name, mmr)
+        pickup = self.get_server_pickup(ctx)
+        if not pickup.active:
+            await self.bot.say("No current pickup game, please start one with `!startpickup` first")
+            return
+
+        pickup.add_player(name, mmr)
+
+        await self.on_pickup_updated(ctx, pickup)
 
     @command(description="Join an already-started pickup game. Format: <mmr>", no_pm=True, pass_context=True)
     async def joinpickup(self, ctx, mmr: int=DEFAULT_MMR):
         if not self.in_correct_channel(ctx):
             return
 
-        await self.add_pickup_player(ctx, ctx.message.author.name, mmr)
+        pickup = self.get_server_pickup(ctx)
+        if not pickup.active:
+            await self.bot.say("No current pickup game, please start one with `!startpickup` first")
+            return
+
+        pickup.add_player(ctx.message.author.name, mmr)
+
+        await self.on_pickup_updated(ctx, pickup)
+
+    @command(description="Abandon your slot in the current pickup", no_pm=True, pass_context=True)
+    async def leavepickup(self, ctx):
+        if not self.in_correct_channel(ctx):
+            return
+
+        pickup = self.get_server_pickup(ctx)
+        if not pickup.active:
+            return
+
+        pickup.remove_player(ctx.message.author.name)
+
+        await self.on_pickup_updated(ctx, pickup)
 
     @command(description="Show who has joined the pickup", no_pm=True, pass_context=True)
     async def pickupstatus(self, ctx):
@@ -86,7 +106,6 @@ class PickupCommands(object):
         status += "__Players__: {}\n".format(", ".join([p.name for p in players]))
 
         await self.bot.say(status)
-
 
     @command(description="Choose a random map", pass_context=True)
     async def randommap(self, ctx):
