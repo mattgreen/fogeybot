@@ -51,6 +51,10 @@ class MMRInfo(object):
         self.hl_mmr = hl_mmr
 
     @property
+    def mmr(self):
+        return max(self.qm_mmr, self.hl_mmr)
+
+    @property
     def present(self):
         return self.status == self.PRESENT
 

@@ -65,7 +65,7 @@ class PickupCommands(object):
         await self.on_pickup_updated(ctx, pickup)
 
     @command(description="Join an already-started pickup game. Format: <mmr>", no_pm=True, pass_context=True)
-    async def joinpickup(self, ctx, mmr: int=DEFAULT_MMR):
+    async def joinpickup(self, ctx, mmr: int=0):
         if not self.in_correct_channel(ctx):
             return
 
@@ -74,21 +74,25 @@ class PickupCommands(object):
             await self.bot.say("No current pickup game, please start one with `!startpickup` first")
             return
 
+        if mmr == 0:
+            mmr = None
+
         # No MMR specified? Try to look it up for them
-        #if mmr is None:
-            #try:
-                #battle_tag = await self.db.lookup_battle_tag(ctx.message.author.id)
-                #if battle_tag is not None:
-                    #mmr_info = self.api.get_mmr(battle_tag)
-                    #if mmr_info.present:
-                        #mmr = max(mmr_info.qm_mmr, mmr_info.hl_mmr)
+        if mmr is None:
+            try:
+                battle_tag = await self.db.lookup_battle_tag(ctx.message.author.id)
+                if battle_tag is not None:
+                    mmr_info = await self.api.get_mmr(battle_tag)
+                    if mmr_info.present:
+                        mmr = mmr_info.mmr
 
-            #except APIError:
-                #self.bot.say("Sorry, I'm having trouble talking to HotsLogs right now")
+            except APIError:
+                self.bot.say("Sorry, I'm having trouble talking to HotsLogs right now")
 
-        ## If we still don't have an MMR, use the default
-        #if mmr is None:
-            #mmr = self.DEFAULT_MMR
+        # If we still don't have an MMR, use the default
+        if mmr is None:
+            mmr = self.DEFAULT_MMR
+
 
         pickup.add_player(ctx.message.author.name, mmr)
 
