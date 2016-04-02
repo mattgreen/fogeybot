@@ -9,6 +9,7 @@ It's tailored towards Heroes of the Storm.
 * Python 3.5
 * A dedicated Discord account for the bot
 * Somewhere to run it (VPS, Heroku, BlueMix, etc)
+* MongoDB for persisted information
 
 ## Running
 
@@ -23,7 +24,7 @@ Next, install dependencies:
 
 Finally, start FogeyBot, specifying login information in environment variables:
 
-    $ DISCORD_EMAIL="bot_email@example.com" DISCORD_PASSWORD="bot_password" python -m fogeybot
+    $ DISCORD_EMAIL="bot_email@example.com" DISCORD_PASSWORD="bot_password" MONGO_URI="uri" python -m fogeybot
 
 You can configure the bot to only listen for commands on a certain channel by setting the `DISCORD_CHANNEL` env var, as well.
 
