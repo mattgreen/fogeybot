@@ -121,11 +121,11 @@ class PickupCommands(object):
             await self.bot.say("No current pickup game, please start one with `!startpickup` first")
             return
 
-        players = pickup.players
+        player_names = sorted([p.name for p in pickup.players])
 
         status = "Pickup Status: \n"
-        status += "__Info__: {}/10 slots filled\n".format(len(players))
-        status += "__Players__: {}\n".format(", ".join([p.name for p in players]))
+        status += "__Info__: {}/10 slots filled\n".format(len(player_names))
+        status += "__Players__: {}\n".format(", ".join(player_names))
 
         await self.bot.say(status)
 
