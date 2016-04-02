@@ -12,11 +12,23 @@ class UserCommands(object):
             await self.bot.reply("bad battle tag format, it should look like this: `MrCool#123`")
             return
 
-        # TODO verify with hotslogs (account for private profiles)
+        try:
+            info = await self.api.get_mmr(battletag)
+
+            if info.present:
+                msg = "Registration successful\n"
+                msg += "**Note**: MMR lookup requires that your HotsLog profile remains public"
+            else:
+                msg = "Unable to find `{}` via HotsLogs; either your profile is private, or you made a typo\n".format(battletag)
+                msg += "If you made a typo: simply type `!register battletag#123` again\n"
+                msg += "If your profile is private: you will need to specify your MMR each time you `!joinpickup`, or make it public"
+
+        except APIError:
+            msg = "Registration succeeded, but I was unable to verify your battle tag with HotsLogs\n"
+            msg += "**Note**: MMR lookup requires that your HotsLog profile remains public"
 
         await self.db.register_battle_tag(ctx.message.author.id, battletag)
-
-        await self.bot.reply("Registration successful")
+        await self.bot.reply(msg)
 
     @command(description="Shows your registered battle tags, if any", pass_context=True)
     async def registrationstatus(self, ctx):
