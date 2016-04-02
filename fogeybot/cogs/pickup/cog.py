@@ -4,14 +4,16 @@ import re
 from discord.ext.commands import command
 
 from fogeybot.errors import APIError
+
 from .pickup import Pickup
 
 class PickupCommands(object):
     DEFAULT_MMR = 1500
 
-    def __init__(self, bot, api, channel):
+    def __init__(self, bot, api, db, channel):
         self.bot = bot
         self.api = api
+        self.db = db
         self.channel = channel
 
         self.maps = None
@@ -71,6 +73,22 @@ class PickupCommands(object):
         if not pickup.active:
             await self.bot.say("No current pickup game, please start one with `!startpickup` first")
             return
+
+        # No MMR specified? Try to look it up for them
+        #if mmr is None:
+            #try:
+                #battle_tag = await self.db.lookup_battle_tag(ctx.message.author.id)
+                #if battle_tag is not None:
+                    #mmr_info = self.api.get_mmr(battle_tag)
+                    #if mmr_info.present:
+                        #mmr = max(mmr_info.qm_mmr, mmr_info.hl_mmr)
+
+            #except APIError:
+                #self.bot.say("Sorry, I'm having trouble talking to HotsLogs right now")
+
+        ## If we still don't have an MMR, use the default
+        #if mmr is None:
+            #mmr = self.DEFAULT_MMR
 
         pickup.add_player(ctx.message.author.name, mmr)
 

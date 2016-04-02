@@ -1,31 +1,27 @@
-import aioredis
+from motor.motor_asyncio import AsyncIOMotorClient
 
 class Database(object):
-    BATTLETAG_PREFIX = "btag"
+    def __init__(self, uri):
+        self.client = AsyncIOMotorClient(uri)
+        self.db = self.client['fogeybot']
+        self.collection = self.db['users']
 
-    def __init__(self, hostname, port, password):
-        self._pool = None
-        self._address = (hostname, port)
-        self._password = password
-
-    async def connect(self):
-        self._pool = await aioredis.create_pool(self._address,
-                                                password=self._password,
-                                                minsize=2,
-                                                maxsize=5)
+    async def test_connection(self):
+        await self.collection.count()
 
     async def lookup_battle_tag(self, discord_id):
-        with (await self._pool) as redis:
-            tag = await redis.get("{}-{}".format(self.BATTLETAG_PREFIX, discord_id))
-            if tag is None:
-                return None
+        doc = await self.collection.find_one({'_id': {'$eq': discord_id}})
+        if doc is None:
+            return None
 
-            return tag.decode('utf-8')
+        return doc['battle_tag']
 
     async def register_battle_tag(self, discord_id, battle_tag):
-        with (await self._pool) as redis:
-            await redis.set("{}-{}".format(self.BATTLETAG_PREFIX, discord_id), battle_tag)
+        existing = await self.collection.find_one({'_id': {'$eq': discord_id}})
+        if existing:
+            await self.collection.update({'_id': discord_id}, {'$set': {'battle_tag': battle_tag}})
+        else:
+            await self.collection.insert({'_id': discord_id, 'battle_tag': battle_tag})
 
     async def unregister_battle_tag(self, discord_id):
-        with (await self._pool) as redis:
-            await redis.delete("{}-{}".format(self.BATTLETAG_PREFIX, discord_id))
+        await self.collection.remove({'_id': {'$eq': discord_id}})

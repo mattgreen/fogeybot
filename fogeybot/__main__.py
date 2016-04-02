@@ -17,22 +17,17 @@ bot = Bot(command_prefix="!", description="I am FogeyBot! I help start pickup ga
 async def on_ready():
     print("FogeyBot: logged in as %s" % (bot.user.name))
 
-config = {}
-if "VCAP_SERVICES" in os.environ:
-    config = json.loads(os.environ["VCAP_SERVICES"])["rediscloud"][0]["credentials"]
-else:
-    config = { "hostname": "localhost", "port": 6379, "password": None }
-
 email = os.environ["DISCORD_EMAIL"]
 password = os.environ["DISCORD_PASSWORD"]
 channel = os.environ.get("DISCORD_CHANNEL")
+uri = os.environ["MONGO_URI"]
 
-db = Database(config["hostname"], config["port"], config["password"])
-asyncio.get_event_loop().run_until_complete(db.connect())
+db = Database(uri)
+asyncio.get_event_loop().run_until_complete(db.test_connection())
 
 api = HotsLogsAPI()
 
 bot.add_cog(GeneralCommands(bot))
-bot.add_cog(PickupCommands(bot, api, channel))
+bot.add_cog(PickupCommands(bot, api, db, channel))
 bot.add_cog(UserCommands(bot, api, db))
 bot.run(email, password)

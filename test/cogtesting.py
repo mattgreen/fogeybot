@@ -18,3 +18,7 @@ class MockBot(object):
 
     async def say(self, message):
         self.messages.append(message)
+
+
+class MockDB(object):
+    pass
