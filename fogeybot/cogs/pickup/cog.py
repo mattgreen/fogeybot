@@ -85,6 +85,7 @@ class PickupCommands(object):
                     mmr_info = await self.api.get_mmr(battle_tag)
                     if mmr_info.present:
                         mmr = mmr_info.mmr
+                        print("Fetched MMR for {}: {}".format(battle_tag, mmr))
 
             except APIError:
                 self.bot.say("Sorry, I'm having trouble talking to HotsLogs right now")
@@ -92,7 +93,6 @@ class PickupCommands(object):
         # If we still don't have an MMR, use the default
         if mmr is None:
             mmr = self.DEFAULT_MMR
-
 
         pickup.add_player(ctx.message.author.name, mmr)
 
@@ -121,11 +121,11 @@ class PickupCommands(object):
             await self.bot.say("No current pickup game, please start one with `!startpickup` first")
             return
 
-        player_names = sorted([p.name for p in pickup.players])
+        players = sorted(pickup.players, key=lambda p: p.name)
 
         status = "Pickup Status: \n"
-        status += "__Info__: {}/10 slots filled\n".format(len(player_names))
-        status += "__Players__: {}\n".format(", ".join(player_names))
+        status += "__Info__: {}/10 slots filled\n".format(len(players))
+        status += "__Players__: {}\n".format(", ".join(["{} ({})".format(p.name, p.mmr) for p in players]))
 
         await self.bot.say(status)
 
