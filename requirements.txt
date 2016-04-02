@@ -1,6 +1,6 @@
 aiohttp==0.21.2
 chardet==2.3.0
--e git+https://github.com/Rapptz/discord.py@b10432d393f5d9d3cf29afe853f1ac3a22fb871f#egg=discord.py
+git+https://github.com/Rapptz/discord.py@b10432d393f5d9d3cf29afe853f1ac3a22fb871f#egg=discord.py
 greenlet==0.4.9
 motor==0.6.2
 pymongo==2.8
