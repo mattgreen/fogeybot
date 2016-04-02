@@ -13,9 +13,13 @@ class TestHotsLogsAPI(unittest.TestCase):
         self.assertTrue(len(maps) > 5)
 
     def test_get_mmr(self):
-        mmrs = self.run(self.api.get_mmr("benthor#1644"))
-        self.assertTrue("qm" in mmrs and "hl" in mmrs)
+        info = self.run(self.api.get_mmr("benthor#1644"))
+
+        assert info.present
+        assert info.qm_mmr > 0
+        assert info.hl_mmr > 0
 
     def test_get_mmr_not_found(self):
-        mmrs = self.run(self.api.get_mmr("benthor#1645"))
-        self.assertIsNone(mmrs)
+        info = self.run(self.api.get_mmr("benthor#1645"))
+
+        assert not info.present

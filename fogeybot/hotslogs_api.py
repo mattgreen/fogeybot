@@ -23,17 +23,34 @@ class HotsLogsAPI(object):
             raise APIError()
 
         if not response:
-            return None
+            return MMRInfo(MMRInfo.NO_INFO)
 
         rankings = response.get("LeaderboardRankings")
         if not rankings:
-            return None
+            return MMRInfo(MMRInfo.NO_INFO)
 
-        profile = {}
+        qm_mmr = 0
+        hl_mmr = 0
+
         for ranking in rankings:
             if ranking["GameMode"] == "QuickMatch":
-                profile["qm"] = ranking["CurrentMMR"]
+                qm_mmr = ranking["CurrentMMR"]
             elif ranking["GameMode"] == "HeroLeague":
-                profile["hl"] = ranking["CurrentMMR"]
+                hl_mmr = ranking["CurrentMMR"]
 
-        return profile
+        return MMRInfo(MMRInfo.PRESENT, qm_mmr, hl_mmr)
+
+
+class MMRInfo(object):
+    NO_INFO = "not-found"
+    PRESENT = "ok"
+
+    def __init__(self, status, qm_mmr=0, hl_mmr=0):
+        self.status = status
+        self.qm_mmr = qm_mmr
+        self.hl_mmr = hl_mmr
+
+    @property
+    def present(self):
+        return self.status == self.PRESENT
+
