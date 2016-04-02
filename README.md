@@ -42,51 +42,72 @@ This is used regularly to host pickup games for Fogey League.
 
 ## Commands
 
-### !help
+### General
+#### !help
 
 Prints help information
 
-### !uptime
+#### !uptime
 
 Prints uptime information. Useful for monitoring how good your hosting is.
 
-### !coinflip
+#### !coinflip
 
 Flips a coin
 
-### !pickupstatus
 
-Prints out information about the current pickup, including who has joined
+### Pickup
 
-### !startpickup
+#### !startpickup
 
 Starts a new pickup game
 
-### !addpickup name [mmr]
+#### !addpickup name [mmr]
 
 Adds the specified player to the current pickup game with the given MMR. If it is not specified, use a default MMR of 1500. This command is useful for quickly on-boarding new users.
 
 If the MMR is not parsable, it is ignored. If it is outside a reasonable range, it defaults to 1500.
 
-### !joinpickup [mmr]
+#### !joinpickup [mmr]
 
-Adds the player to the current pickup game with the given MMR. If it is not specified, use a default MMR of 1500.
+Adds the player to the current pickup game with the given MMR. 
+
+If the user has registered their battle tag (via `!register`), and no MMR is specified, it will be retrieved from HotsLogs.
+If the user has not registered their battle tag, or their HL profile is private, then use a default MMR of 1500.
 
 If the MMR is not parsable, it is ignored. If it is outside a reasonable range, it defaults to 1500.
 
-### !leavepickup
+#### !pickupstatus
+
+Prints out information about the current pickup, including who has joined and their MMR
+
+#### !leavepickup
 
 Removes your pickup slot, freeing it up for someone else.
 
-### !stoppickup
+#### !stoppickup
 
 Stops the pickup game.
 
-Games expire after 15 minutes of the first `!startpickup` command.
+Games expire after 30 minutes of the first `!startpickup` command.
 
-### !randommap
+#### !randommap
 
-Prints a random map, excluding Haunted Mines.
+Prints a random map, excluding Haunted Mines and Lost Cavern.
+
+### User registration
+
+#### !register battletag#123
+
+Associates the user's battle.net ID with the Discord account
+
+#### !registrationstatus
+
+Returns the user's battle.net ID, if any
+
+#### !unregister
+
+Removes the user's battle.net ID information, if any
 
 ## Deploying
 
