@@ -12,12 +12,13 @@ class UserCommands(object):
             await self.bot.reply("bad battle tag format, it should look like this: `MrCool#123`")
             return
 
+        mmr = None
         try:
             info = await self.api.get_mmr(battletag)
+            mmr = info.mmr
 
             if info.present:
                 msg = "Registration successful\n"
-                msg += "**Note**: MMR lookup requires that your HotsLog profile remains public"
             else:
                 msg = "Unable to find `{}` via HotsLogs; either your profile is private, or you made a typo\n".format(battletag)
                 msg += "If you made a typo: simply type `!register battletag#123` again\n"
@@ -25,16 +26,16 @@ class UserCommands(object):
 
         except APIError:
             msg = "Registration succeeded, but I was unable to verify your battle tag with HotsLogs\n"
-            msg += "**Note**: MMR lookup requires that your HotsLog profile remains public"
+            mmr = None
 
-        await self.db.register_battle_tag(ctx.message.author.id, battletag)
+        await self.db.register_battle_tag(ctx.message.author.id, battletag, mmr)
         await self.bot.reply(msg)
 
     @command(description="Shows your registered battle tags, if any", pass_context=True)
     async def registrationstatus(self, ctx):
-        battle_tag = await self.db.lookup_battle_tag(ctx.message.author.id)
-        if battle_tag:
-            await self.bot.reply("Registered battle tag: `{}`".format(battle_tag))
+        user_info = await self.db.lookup_battle_tag(ctx.message.author.id)
+        if user_info:
+            await self.bot.reply("Registered battle tag: `{}`, MMR: {}".format(user_info['battle_tag'], user_info.get('mmr', "(none)")))
         else:
             await self.bot.reply("Battle tag not found")
 

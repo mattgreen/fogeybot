@@ -9,19 +9,31 @@ class Database(object):
     async def test_connection(self):
         await self.collection.count()
 
-    async def lookup_battle_tag(self, discord_id):
+    async def get_mmr(self, discord_id):
         doc = await self.collection.find_one({'_id': {'$eq': discord_id}})
         if doc is None:
             return None
 
-        return doc['battle_tag']
+        return doc.get('mmr')
 
-    async def register_battle_tag(self, discord_id, battle_tag):
+    async def set_mmr(self, discord_id, mmr):
+        await self.collection.update({'_id': discord_id}, {'$set': {'mmr': mmr}})
+
+    async def lookup_battle_tag(self, discord_id):
+        doc = await self.collection.find_one({'_id': {'$eq': discord_id}})
+        if doc is None:
+            return {}
+
+        return doc
+
+    async def register_battle_tag(self, discord_id, battle_tag, mmr):
         existing = await self.collection.find_one({'_id': {'$eq': discord_id}})
+        doc = {'battle_tag': battle_tag, 'mmr': mmr}
+
         if existing:
-            await self.collection.update({'_id': discord_id}, {'$set': {'battle_tag': battle_tag}})
+            await self.collection.update({'_id': discord_id}, {'$set': doc})
         else:
-            await self.collection.insert({'_id': discord_id, 'battle_tag': battle_tag})
+            await self.collection.insert({'_id': discord_id, **doc})
 
     async def unregister_battle_tag(self, discord_id):
         await self.collection.remove({'_id': {'$eq': discord_id}})
