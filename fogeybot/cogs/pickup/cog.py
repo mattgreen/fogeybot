@@ -79,6 +79,7 @@ class PickupCommands(object):
 
         # No MMR specified? Try to look it up for them
         discord_id = ctx.message.author.id
+
         if mmr is None:
             try:
                 battle_tag = await self.db.lookup_battle_tag(discord_id)
