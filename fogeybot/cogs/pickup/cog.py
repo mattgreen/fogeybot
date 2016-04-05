@@ -78,17 +78,22 @@ class PickupCommands(object):
             mmr = None
 
         # No MMR specified? Try to look it up for them
+        discord_id = ctx.message.author.id
         if mmr is None:
             try:
-                battle_tag = await self.db.lookup_battle_tag(ctx.message.author.id)
+                battle_tag = await self.db.lookup_battle_tag(discord_id)
                 if battle_tag is not None:
                     mmr_info = await self.api.get_mmr(battle_tag)
                     if mmr_info.present:
                         mmr = mmr_info.mmr
+                        await self.db.set_mmr(discord_id, mmr)
+
                         print("Fetched MMR for {}: {}".format(battle_tag, mmr))
 
             except APIError:
-                self.bot.say("Sorry, I'm having trouble talking to HotsLogs right now")
+                mmr = await self.db.get_mmr(discord_id)
+                if mmr is None:
+                    self.bot.say("Sorry, I'm having trouble talking to HotsLogs right now")
 
         # If we still don't have an MMR, use the default
         if mmr is None:
