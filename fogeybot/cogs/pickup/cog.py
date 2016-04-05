@@ -82,14 +82,12 @@ class PickupCommands(object):
 
         if mmr is None:
             try:
-                battle_tag = await self.db.lookup_battle_tag(discord_id)
-                if battle_tag is not None:
-                    mmr_info = await self.api.get_mmr(battle_tag)
+                user_info = await self.db.lookup_battle_tag(discord_id)
+                if user_info:
+                    mmr_info = await self.api.get_mmr(user_info['battle_tag'])
                     if mmr_info.present:
                         mmr = mmr_info.mmr
                         await self.db.set_mmr(discord_id, mmr)
-
-                        print("Fetched MMR for {}: {}".format(battle_tag, mmr))
 
             except APIError:
                 mmr = await self.db.get_mmr(discord_id)

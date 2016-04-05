@@ -24,7 +24,7 @@ class Database(object):
         if doc is None:
             return {}
 
-        return doc['battle_tag']
+        return doc
 
     async def register_battle_tag(self, discord_id, battle_tag, mmr):
         existing = await self.collection.find_one({'_id': {'$eq': discord_id}})
