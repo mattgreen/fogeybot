@@ -1,5 +1,6 @@
 aiohttp==0.21.2
 chardet==2.3.0
+cffi==1.5.2
 git+https://github.com/Rapptz/discord.py@async
 greenlet==0.4.9
 motor==0.6.2
