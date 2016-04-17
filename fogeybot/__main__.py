@@ -17,8 +17,8 @@ bot = Bot(command_prefix="!", description="I am FogeyBot! I help start pickup ga
 async def on_ready():
     print("FogeyBot: logged in as %s" % (bot.user.name))
 
-email = os.environ["DISCORD_EMAIL"]
-password = os.environ["DISCORD_PASSWORD"]
+client_id = os.environ["DISCORD_CLIENT_ID"]
+token = os.environ["DISCORD_TOKEN"]
 channel = os.environ.get("DISCORD_CHANNEL")
 uri = os.environ["MONGO_URI"]
 
@@ -30,4 +30,6 @@ api = HotsLogsAPI()
 bot.add_cog(GeneralCommands(bot))
 bot.add_cog(PickupCommands(bot, api, db, channel))
 bot.add_cog(UserCommands(bot, api, db))
-bot.run(email, password)
+
+bot.client_id = client_id
+bot.run(token)
