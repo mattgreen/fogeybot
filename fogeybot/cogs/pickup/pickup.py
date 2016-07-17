@@ -1,3 +1,4 @@
+import itertools
 import statistics
 import time
 
@@ -53,21 +54,24 @@ class Pickup(object):
         if (len(self._players) % 2) != 0:
             raise ValueError("need an even number of players")
 
+        target_team_mmr = 0
+        for player in self._players:
+            target_team_mmr += player.mmr
+        target_team_mmr /= 2
+
         team1 = []
-        team2 = []
+        team1_mmr = 0
 
-        players_by_mmr = sorted(self._players, key=lambda p: p.mmr)
+        for possibility in itertools.combinations(self._players, int(len(self._players) / 2)):
+            team_mmr = 0
+            for p in possibility:
+                team_mmr += p.mmr
 
-        while players_by_mmr:
-            p1 = players_by_mmr.pop()
-            p2 = players_by_mmr.pop()
+            if team_mmr > team1_mmr and team_mmr <= target_team_mmr:
+                team1 = possibility
+                team1_mmr = team_mmr
 
-            if len(team1) % 2 == 0:
-                team1.append(p1)
-                team2.append(p2)
-            else:
-                team1.append(p2)
-                team2.append(p1)
+        team2 = [p for p in self._players if p not in team1]
 
         return Team(team1), Team(team2)
 
@@ -82,3 +86,12 @@ class Player(object):
     def __init__(self, name, mmr):
         self.name = name
         self.mmr = mmr
+
+    def __eq__(self, rhs):
+        if not isinstance(rhs, Player):
+            return False
+
+        return self.name == rhs.name and self.mmr == rhs.mmr
+
+    def __str__(self):
+        return "<Player name={}, mmr={}>" % (self.name, self.mmr)

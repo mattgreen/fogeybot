@@ -62,6 +62,41 @@ class TestPickup(unittest.TestCase):
         team1, team2 = self.pickup.teams
         self.assertEqual(team1.mean_mmr, team2.mean_mmr)
 
+    def test_sample_data(self):
+        self.pickup.add_player("Velvet", 2325)
+        self.pickup.add_player("Krezrel", 2268)
+        self.pickup.add_player("Zadkiel", 2259)
+        self.pickup.add_player("Poe", 2115)
+        self.pickup.add_player("BigBeerd", 1892)
+        self.pickup.add_player("Kendo", 1845)
+        self.pickup.add_player("Gio", 1832)
+        self.pickup.add_player("Shadowleaves", 1776)
+        self.pickup.add_player("Hulk", 1601)
+        self.pickup.add_player("Bray", 1139)
+
+        team1, team2 = self.pickup.teams
+        self.assertTrue(abs(team1.mean_mmr - team2.mean_mmr) < 15)
+
+    def test_sample_data2(self):
+        self.pickup.add_player("Razoth", 2950)
+        self.pickup.add_player("TickleMeOzmo", 2371)
+        self.pickup.add_player("Kendo", 1818)
+        self.pickup.add_player("katrinalorien", 1738)
+        self.pickup.add_player("Cercie", 1719)
+        self.pickup.add_player("VelveThunder", 2439)
+        self.pickup.add_player("syrowatts", 2388)
+        self.pickup.add_player("drivelikebrazil", 1799)
+        self.pickup.add_player("TOFTS", 1761)
+        self.pickup.add_player("bray", 1269)
+
+        team1, team2 = self.pickup.teams
+        print(team1.members)
+        print(team1.mean_mmr)
+        print(team2.members)
+        print(team2.mean_mmr)
+
+        self.assertEqual(team1.mean_mmr, team2.mean_mmr)
+
     def test_active(self):
         self.assertFalse(Pickup(5).active)
 
