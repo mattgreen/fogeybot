@@ -24,7 +24,7 @@ Next, install dependencies:
 
 Finally, start FogeyBot, specifying login information in environment variables:
 
-    $ DISCORD_CLIENT_ID="client_id" DISCORD_TOKEN="bot_token" MONGO_URI="uri" python -m fogeybot
+    $ DISCORD_TOKEN="bot_token" MONGO_URI="uri" python -m fogeybot
 
 You can configure the bot to only listen for commands on a certain channel by setting the `DISCORD_CHANNEL` env var, as well.
 
