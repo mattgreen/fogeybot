@@ -146,7 +146,7 @@ class PickupCommands(object):
     @command(description="Choose a random map", pass_context=True)
     async def randommap(self, ctx):
         def allowed_map(m):
-            exclusions = ["mines", "cavern"]
+            exclusions = ["cavern"]
 
             for exclusion in exclusions:
                 if exclusion in m.lower():
