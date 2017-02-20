@@ -34,6 +34,16 @@ class PickupCommands(object):
         self.state[ctx.message.server] = pickup
 
     async def on_pickup_updated(self, ctx, pickup):
+        def build_team_list(team):
+            members = []
+            for m in sorted(team.members):
+                if m == team.captain:
+                    members.append("**{}**".format(m))
+                else:
+                    members.append(m)
+
+            return members
+
         await self.bot.edit_message(pickup.status_message, "__Status__: %d/10 slots filled" % (len(pickup.players)))
 
         if len(pickup.players) == 10:
@@ -41,12 +51,12 @@ class PickupCommands(object):
 
             self.set_server_pickup(ctx, Pickup.inactive())
 
-            random.shuffle(team1.members)
-            random.shuffle(team2.members)
+            team1_members = build_team_list(team1)
+            team2_members = build_team_list(team2)
 
             assignments = "Pickup team assignments: \n"
-            assignments += "__Team 1__: {} (avg MMR: {})\n".format(", ".join(team1.members), team1.mean_mmr)
-            assignments += "__Team 2__: {} (avg MMR: {})\n".format(", ".join(team2.members), team2.mean_mmr)
+            assignments += "__Team 1__: {} (avg MMR: {})\n".format(", ".join(team1_members), team1.mean_mmr)
+            assignments += "__Team 2__: {} (avg MMR: {})\n".format(", ".join(team2_members), team2.mean_mmr)
 
             await self.bot.say(assignments)
 

@@ -78,6 +78,10 @@ class Pickup(object):
 
 class Team(object):
     def __init__(self, players):
+        by_mmr = sorted(players, key=lambda p: p.mmr, reverse=True)
+
+        self.captain = by_mmr[0].name
+        self.players = [p.name for p in by_mmr[1:]]
         self.members = [p.name for p in players]
         self.mean_mmr = int(statistics.mean([p.mmr for p in players]))
 
