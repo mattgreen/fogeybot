@@ -3,14 +3,35 @@ import aiohttp
 from .errors import APIError
 
 class HotsLogsAPI(object):
-    async def get_maps(self):
-        try:
-            async with aiohttp.get("https://www.hotslogs.com/API/Data/Maps") as response:
-                maps = await response.json()
-                return [m["PrimaryName"] for m in maps]
+    MAPS = [
+        "Battlefield of Eternity",
+        "Blackheart's Bay",
+        "Braxis Holdout",
+        "Braxis Outpost",
+        "Cursed Hollow",
+        "Dragon Shire",
+        "Garden of Terror",
+        "Hanamura",
+        "Haunted Mines",
+        "Infernal Shrines",
+        "Sky Temple",
+        "Tomb of the Spider Queen",
+        "Towers of Doom",
+        "Volskaya Foundry",
+        "Warhead Junction"
+    ]
 
-        except aiohttp.ClientError:
-            raise APIError()
+    async def get_maps(self):
+        return self.MAPS
+
+        # HotsLogs mixes brawl and regular maps in map list, unfortunately
+        # try:
+        #     async with aiohttp.get("https://www.hotslogs.com/API/Data/Maps") as response:
+        #         maps = await response.json()
+        #         return [m["PrimaryName"] for m in maps]
+
+        # except aiohttp.ClientError:
+        #     raise APIError()
 
     async def get_mmr(self, tag):
         if "#" not in tag:
